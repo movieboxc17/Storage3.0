@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Web Storage Example</title>
+</head>
+<body>
+  <h1>Web Storage Example</h1>
+  <input type="file" id="fileInput" accept="image/*,video/*" />
+  <button onclick="saveFile()">Save</button>
+  <div id="output"></div>
+
+  <script>
+    function saveFile() {
+      const fileInput = document.getElementById("fileInput");
+      const file = fileInput.files[0];
+
+      if (!file) {
+        alert("Please select a file.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function () {
+        const dataURL = reader.result;
+        const fileName = file.name;
+
+        // Save the file in localStorage
+        localStorage.setItem(fileName, dataURL);
+
+        // Display the saved file
+        displayFiles();
+      };
+
+      reader.readAsDataURL(file);
+    }
+
+    function displayFiles() {
+      const outputDiv = document.getElementById("output");
+      outputDiv.innerHTML = "";
+
+      for (let i = 0; i < localStorage.length; i++) {
+        const fileName = localStorage.key(i);
+        const dataURL = localStorage.getItem(fileName);
+        const fileType = fileName.split(".").pop();
+
+        if (fileType === "jpg" || fileType === "png" || fileType === "gif") {
+          const img = document.createElement("img");
+          img.src = dataURL;
+          img.width = 200;
+          img.height = 150;
+          outputDiv.appendChild(img);
+        } else if (fileType === "mp4" || fileType === "webm" || fileType === "ogg") {
+          const video = document.createElement("video");
+          video.src = dataURL;
+          video.width = 400;
+          video.height = 300;
+          video.controls = true;
+          outputDiv.appendChild(video);
+        }
+      }
+    }
+
+    // Display files on page load
+    displayFiles();
+  </script>
+</body>
+</html>
